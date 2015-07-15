@@ -95,12 +95,12 @@
     
 }
 
--(InjectableCell *) newCell:(NSString *) identifier
+-(UITableViewCell *) newCell:(NSString *) identifier
 {
-    return  [[InjectableCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+    return  [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
 }
 
--(InjectableCell *) cellForReuseIdentifier:(NSString *) identifier
+-(UITableViewCell *) cellForReuseIdentifier:(NSString *) identifier
 {
     return [self.tView dequeueReusableCellWithIdentifier:identifier];
     
@@ -121,7 +121,7 @@
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     CellConstructor * constructor = [self.constructors objectAtIndex:[self indexPathToConstructorIndex:indexPath]];
-    InjectableCell * cell = constructor.buildCell();
+    UITableViewCell * cell = constructor.buildCell();
     constructor.table = tableView;
     constructor.indexPath=  indexPath;
     cell.userInteractionEnabled = YES;
@@ -141,7 +141,7 @@
     
     CellConstructor * c= [self.constructors objectAtIndex:[self indexPathToConstructorIndex:indexPath]];
     if(c.handleCellSelectedWithCell) {
-        InjectableCell * cell = (InjectableCell *) [self.tView cellForRowAtIndexPath:indexPath];
+        UITableViewCell * cell = (UITableViewCell *) [self.tView cellForRowAtIndexPath:indexPath];
         c.handleCellSelectedWithCell(cell);
     }
     else {

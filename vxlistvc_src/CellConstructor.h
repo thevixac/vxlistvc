@@ -11,27 +11,17 @@
 #import "InjectableView.h"
 
 
-//its just a placeholder tableviewcell that knows how big it needs to be, maybe it can ask the topLevelView what size is good.
-@interface InjectableCell : UITableViewCell
-
-//@property (nonatomic, assign) float prefferedSize;
-
-@property (nonatomic, strong) UIView * topLevelView;
-@property (assign) float prefHeight;
-
-@end
-
 
 
 @interface CellConstructor : NSObject<ViewSizeProtocol>
 {
 }
--(id) initWithBuilder:(InjectableCell * (^)(void)) builder handler:(void (^)(void)) handler;
--(id) initWithBuilder:(InjectableCell * (^)(void)) builder handler:(void (^)(void)) handler height:(float) cellHeight;
--(id) initWithBuilder:(InjectableCell * (^)(void)) builder handlerWithCell:(void (^)(InjectableCell *)) handler  height:(float) cellHeight;
-@property (copy) InjectableCell * (^buildCell)(void);
+-(id) initWithBuilder:(UITableViewCell * (^)(void)) builder handler:(void (^)(void)) handler;
+-(id) initWithBuilder:(UITableViewCell * (^)(void)) builder handler:(void (^)(void)) handler height:(float) cellHeight;
+-(id) initWithBuilder:(UITableViewCell * (^)(void)) builder handlerWithCell:(void (^)(UITableViewCell *)) handler  height:(float) cellHeight;
+@property (copy) UITableViewCell * (^buildCell)(void);
 @property (copy) void (^handleCellSelected)(void);
-@property (copy) void (^handleCellSelectedWithCell)(InjectableCell *);
+@property (copy) void (^handleCellSelectedWithCell)(UITableViewCell *);
 @property (assign) float preffSize;
 @property (assign) int64_t constructorId;
 @property (nonatomic, copy) NSString * sectionHeader; //if set, this cell becomes the start of a new section

@@ -47,12 +47,12 @@
     [self.tView setFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
 }
 
--(InjectableCell *) newCell:(NSString *) identifier
+-(UITableViewCell *) newCell:(NSString *) identifier
 {
     return [manager_ newCell:identifier];
 }
 
--(InjectableCell *) cellForReuseIdentifier:(NSString *) identifier
+-(UITableViewCell *) cellForReuseIdentifier:(NSString *) identifier
 {
     return [manager_ cellForReuseIdentifier:identifier];
 }

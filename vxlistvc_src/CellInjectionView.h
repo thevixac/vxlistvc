@@ -15,7 +15,7 @@
 
 @protocol CellInjectionProtocol <NSObject>
 
--(void) configureCell:(InjectableCell *) cell;
+-(void) configureCell:(UITableViewCell *) cell;
 
 @end
 
@@ -31,8 +31,8 @@
 @property (nonatomic, weak) id<CellInjectionProtocol> delegate; //in case init with frame wasnt called.
 
 
--(InjectableCell *) cellForReuseIdentifier:(NSString *) identifier;
--(InjectableCell *) newCell:(NSString *) identifier;
+-(UITableViewCell *) cellForReuseIdentifier:(NSString *) identifier;
+-(UITableViewCell *) newCell:(NSString *) identifier;
 
 
 -(CellConstructor *) getConstructor:(size_t) row;

@@ -20,8 +20,8 @@
 @property (copy) void (^scrolledToTopCallback)(void);
 @property (nonatomic, weak) IBOutlet UITableView * tView;
 
--(InjectableCell *) cellForReuseIdentifier:(NSString *) identifier;
--(InjectableCell *) newCell:(NSString *) identifier;
+-(UITableViewCell *) cellForReuseIdentifier:(NSString *) identifier;
+-(UITableViewCell *) newCell:(NSString *) identifier;
 
 -(id) initWithTable:(UITableView *) table;
 

@@ -9,27 +9,10 @@
 #import "CellConstructor.h"
 #import "InjectableView.h"
 
-@implementation InjectableCell
-
--(void) setTopLevelView:(UIView *)topLevelView
-{
-
-    if(_topLevelView)
-    {
-        [_topLevelView removeFromSuperview];
-    }
-    _topLevelView = topLevelView;
-    [self setFrame:CGRectMake(self.frame.origin.x, self.frame.origin.y, topLevelView.frame.size.width, topLevelView.frame.size.height)];
-    [self addSubview:topLevelView];
-    self.prefHeight = topLevelView.frame.size.height;
-
-}
-
-@end
 
 @implementation CellConstructor
 
--(id) initWithBuilder:(InjectableCell * (^)(void)) builder handlerWithCell:(void (^)(InjectableCell *)) handler height:(float) cellHeight
+-(id) initWithBuilder:(UITableViewCell * (^)(void)) builder handlerWithCell:(void (^)(UITableViewCell *)) handler height:(float) cellHeight
 {
     self = [super init];
     if(self)
@@ -41,13 +24,13 @@
     }
     return self;
 }
--(id) initWithBuilder:(InjectableCell * (^)(void)) builder handler:(void (^)(void)) handler
+-(id) initWithBuilder:(UITableViewCell * (^)(void)) builder handler:(void (^)(void)) handler
 {
     return [self initWithBuilder:builder handler:handler height:50];
 }
 
 
--(id) initWithBuilder:(InjectableCell * (^)(void)) builder handler:(void (^)(void)) handler height:(float) cellHeight
+-(id) initWithBuilder:(UITableViewCell * (^)(void)) builder handler:(void (^)(void)) handler height:(float) cellHeight
 
 {
     self = [super init];
