@@ -11,7 +11,7 @@
 
 
 
-@interface CellInjectionManager : NSObject<UITableViewDelegate, UITableViewDataSource>
+@interface CellInjectionManager : NSObject<UITableViewDelegate, UITableViewDataSource, UISearchControllerDelegate, UISearchBarDelegate>
 {
     
 }

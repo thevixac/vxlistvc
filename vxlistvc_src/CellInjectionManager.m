@@ -34,8 +34,8 @@
 }
 
 -(void) refresh {
-    [self.tView reloadData];
     [self extractHeaders];
+    [self.tView reloadData];
 }
 
 -(id) initWithTable:(UITableView *) table {
@@ -87,23 +87,18 @@
         return [self.constructors count];
     }
 }
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
- 
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     CellConstructor * c =[self.constructors objectAtIndex:[self indexPathToConstructorIndex:indexPath]];
     return c.preffSize;
-    
 }
 
--(UITableViewCell *) newCell:(NSString *) identifier
-{
+-(UITableViewCell *) newCell:(NSString *) identifier {
     return  [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
 }
 
--(UITableViewCell *) cellForReuseIdentifier:(NSString *) identifier
-{
+-(UITableViewCell *) cellForReuseIdentifier:(NSString *) identifier {
     return [self.tView dequeueReusableCellWithIdentifier:identifier];
-    
 }
 
 
@@ -118,8 +113,7 @@
     
 }
 
-- (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     CellConstructor * constructor = [self.constructors objectAtIndex:[self indexPathToConstructorIndex:indexPath]];
     UITableViewCell * cell = constructor.buildCell();
     constructor.table = tableView;
@@ -149,12 +143,12 @@
     }
 }
 
--(NSString *) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section{
+
+-(NSString *) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     return [self.headers count] ? [[self.headers objectAtIndex:section] valueForKey:@"title"] : @"";
 }
 
-- (NSString *) tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
-{
+- (NSString *) tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
     return @"";
 }
 
@@ -163,8 +157,7 @@
     [self scrollToBottom:true];
 }
 
--(void) scrollToBottom:(BOOL) animated
-{
+-(void) scrollToBottom:(BOOL) animated {
     const size_t count = [self.constructors count];
     if(!self.tView || count ==0) {
         return;
