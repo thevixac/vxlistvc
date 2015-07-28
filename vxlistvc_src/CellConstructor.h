@@ -10,7 +10,7 @@
 
 #import "InjectableView.h"
 
-
+@class UIView;
 
 
 @interface CellConstructor : NSObject<ViewSizeProtocol>
@@ -19,7 +19,11 @@
 -(id) initWithBuilder:(UITableViewCell * (^)(void)) builder handler:(void (^)(void)) handler;
 -(id) initWithBuilder:(UITableViewCell * (^)(void)) builder handler:(void (^)(void)) handler height:(float) cellHeight;
 -(id) initWithBuilder:(UITableViewCell * (^)(void)) builder handlerWithCell:(void (^)(UITableViewCell *)) handler  height:(float) cellHeight;
+
+
+typedef UIView * (^HeaderBuilder)(void);
 @property (copy) UITableViewCell * (^buildCell)(void);
+@property (copy) UIView * (^buildHeader)(void);
 @property (copy) void (^handleCellSelected)(void);
 @property (copy) void (^handleCellSelectedWithCell)(UITableViewCell *);
 @property (assign) float preffSize;

@@ -21,6 +21,13 @@
         self.preffSize = cellHeight;
         self.handleCellSelectedWithCell = handler;
         
+        //TODO rm
+        self.buildHeader =^UIView *{
+            UIView * v = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 200, 30)];
+            [v setBackgroundColor:[UIColor greenColor]];
+            return v;
+        };
+        
     }
     return self;
 }

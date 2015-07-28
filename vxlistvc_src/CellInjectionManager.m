@@ -58,14 +58,24 @@
     const size_t count = [self.constructors count];
     for(size_t i=0;i < count; i++) {
         CellConstructor * constructor = [self.constructors objectAtIndex:i];
-        if(!constructor.sectionHeader) {
+
+        if(!(constructor.sectionHeader || constructor.buildHeader)) {
+            NSLog(@"no header for constructor %d", (int)i);
             continue;
         }
-        if([self.headers count] >0) {
+        if([self.headers count] >0) { // set cell count for last section
             [[self.headers lastObject] setValue:[NSNumber numberWithUnsignedLong:(i - indexOfLastHeader)] forKey:@"numCells"];
         }
+        
+        //add a new section
         NSMutableDictionary * dict = [NSMutableDictionary dictionary];
-        [dict setObject:constructor.sectionHeader forKey:@"title"];
+        if(constructor.buildHeader) {
+            NSLog(@"assigning build header");
+            [dict setObject:constructor.buildHeader forKey:@"buildHeader"];
+        }
+        else if(constructor.sectionHeader) {
+            [dict setObject:constructor.sectionHeader forKey:@"title"];
+        }
         [self.headers addObject:dict];
         indexOfLastHeader = i;
     }
@@ -143,7 +153,22 @@
     }
 }
 
-
+-(UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    NSLog(@"view for header");
+    if([self.headers count]) {
+        NSLog(@"returning view");
+        CellConstructor * c = [self.constructors objectAtIndex:3];
+        
+        HeaderBuilder f = c.buildHeader;//[[self.headers objectAtIndex:section] valueForKey:@"buildHeader"];
+        if(!f){
+            NSLog(@"no callback");
+            return nil;
+        }
+        NSLog(@"OMG CALLBACK");
+        return f();
+    }
+    return  nil;
+}
 -(NSString *) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     return [self.headers count] ? [[self.headers objectAtIndex:section] valueForKey:@"title"] : @"";
 }
