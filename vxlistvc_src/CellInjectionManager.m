@@ -9,6 +9,7 @@
 #import "CellInjectionManager.h"
 @interface CellInjectionManager ()
 @property (nonatomic, strong) NSMutableArray * headers;
+@property (nonatomic, strong) NSMutableArray * headerViews;
 
 @end
 
@@ -54,6 +55,7 @@
 -(void) extractHeaders {
     NSLog(@"extracting headers");
     self.headers = [NSMutableArray array];
+    self.headerViews = [NSMutableArray array];
     size_t indexOfLastHeader=0;
     const size_t count = [self.constructors count];
     for(size_t i=0;i < count; i++) {
@@ -77,9 +79,12 @@
             [dict setObject:constructor.sectionHeader forKey:@"title"];
         }
         [self.headers addObject:dict];
+
         indexOfLastHeader = i;
     }
-    [[self.headers lastObject] setValue:[NSNumber numberWithUnsignedLong:(count - indexOfLastHeader)] forKey:@"numCells"];
+    if([self.headers count]) {
+        [[self.headers lastObject] setValue:[NSNumber numberWithUnsignedLong:(count - indexOfLastHeader)] forKey:@"numCells"];
+    }
 }
 
 #pragma mark UITableView Delegate & DataSource
@@ -103,6 +108,19 @@
     return c.preffSize;
 }
 
+
+-(CGFloat) tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    /*
+    NSLog(@"height called");
+    UIView * header = [self.headerViews objectAtIndex:section];
+    if(!header) {
+        abort();
+    }
+    return header.frame.size.height;
+     */
+    NSLog(@"TODO GET HEIGHT");
+    return section ==1 ?100 : 0; //TODO this should permit other section headers
+}
 -(UITableViewCell *) newCell:(NSString *) identifier {
     return  [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
 }
@@ -140,6 +158,7 @@
     }
 }
 
+
 - (void) tableView:(UITableView *)tv didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tv deselectRowAtIndexPath:indexPath animated:YES];
     
@@ -155,9 +174,23 @@
 
 -(UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
     NSLog(@"view for header");
+    
+    if(section ==1) {
+        CellConstructor * c= [self.constructors objectAtIndex:1];
+        UIView * v = c.buildHeader();
+//        self.hea
+        return v;
+    }
+    return  nil;
+    /*
     if([self.headers count]) {
         NSLog(@"returning view");
-        CellConstructor * c = [self.constructors objectAtIndex:3];
+        NSLog(@"TODO get the correct constructor instead of this hackery");
+        if([self.constructors count]<4) {
+            return nil;
+        
+        }
+        CellConstructor * c = [self.constructors objectAtIndex:1];
         
         HeaderBuilder f = c.buildHeader;//[[self.headers objectAtIndex:section] valueForKey:@"buildHeader"];
         if(!f){
@@ -165,13 +198,16 @@
             return nil;
         }
         NSLog(@"OMG CALLBACK");
-        return f();
+        UIView *view = f();
+        [self.headerViews setObject:view atIndexedSubscript:section];
     }
     return  nil;
+     */
 }
 -(NSString *) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    return [self.headers count] ? [[self.headers objectAtIndex:section] valueForKey:@"title"] : @"";
+    return [self.headers count] ? [[self.headers objectAtIndex:section] valueForKey:@"title"] : nil;
 }
+
 
 - (NSString *) tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
     return @"";
