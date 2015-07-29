@@ -35,6 +35,9 @@
 
 -(void) refresh {
     [self extractHeaders];
+    if(!self.tView) {
+        NSLog(@"warning, cellinjection has no table");
+    }
     [self.tView reloadData];
 }
 
@@ -52,6 +55,7 @@
 }
 
 -(void) extractHeaders {
+    NSLog(@"extracting headers");
     self.headers = [NSMutableArray array];
     size_t indexOfLastHeader=0;
     const size_t count = [self.constructors count];
@@ -98,6 +102,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     CellConstructor * c =[self.constructors objectAtIndex:[self indexPathToConstructorIndex:indexPath]];
+    NSLog(@"height is %f", c.preffSize);
     return c.preffSize;
 }
 
@@ -109,7 +114,7 @@
             return v.frame.size.height;
         }
     }
-    return 20.0; // normal height for title headers. TODO make property
+    return 0.0;
 }
 -(UITableViewCell *) newCell:(NSString *) identifier {
     return  [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
