@@ -16,7 +16,7 @@
     
 }
 
-@property (nonatomic, strong) NSArray * constructors;
+@property (nonatomic, strong) NSMutableArray * constructors;
 @property (copy) void (^scrolledToTopCallback)(void);
 @property (nonatomic, weak) IBOutlet UITableView * tView;
 
@@ -25,6 +25,10 @@
 
 -(id) initWithTable:(UITableView *) table;
 
+-(void) setConstructorsWithoutReload:(NSArray *) constructors;
 -(void) scrollToBottom;
 -(void) scrollToBottom:(BOOL) animated;
+-(void) setCell:(int) cellNumber height:(CGFloat) height;
+
+-(void) reloadCellsFromIndex:(size_t) index constructors:(NSArray *) array;
 @end

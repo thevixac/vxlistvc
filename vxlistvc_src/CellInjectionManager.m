@@ -25,12 +25,12 @@
 -(void) setup {
         self.headers = [NSMutableArray array];
 }
+
 -(void) setTView:(UITableView *)tView {
     _tView = tView;
     [_tView setDelegate:self];
     [_tView setDataSource:self];
     [self refresh];
-    
 }
 
 -(void) refresh {
@@ -48,10 +48,45 @@
     }
     return self;
 }
-
--(void) setConstructors:(NSArray *)constructors {
+-(void) setConstructors:(NSMutableArray *)constructors {
     _constructors = constructors;
     [self refresh];
+}
+
+-(void) setConstructorsWithoutReload:(NSArray *) constructors {
+    _constructors = [NSMutableArray arrayWithArray:constructors];
+}
+
+-(void) reloadCellsFromIndex:(size_t) index constructors:(NSArray *) newConstructors {
+    NSLog(@"well well well");
+    int oldCount =[self.constructors count];
+
+    //TODO what if theres nothing before this
+    for(int i=index;i < oldCount; i++) {
+        [self.constructors setObject:[newConstructors objectAtIndex:i-index] atIndexedSubscript:i];
+    }
+    int total = [self.constructors count];
+    NSMutableArray * array = [NSMutableArray array];
+    for(int i=index;i < total; i++) {
+        NSIndexPath * p = [self cellNumberToIndexPath:i];
+        [array addObject:p];
+    }
+    if([array count]==0) {
+        return;
+    }
+    [self extractHeaders];
+    [self.tView reloadRowsAtIndexPaths:array withRowAnimation:UITableViewRowAnimationNone];
+    [self jumpToCell:[array lastObject]];
+    
+}
+
+-(void) jumpToCell:(NSIndexPath *) path {
+    NSLog(@"jumping to cell %d %d", (int)path.section, (int)path.row);
+    [self.tView scrollToRowAtIndexPath:path
+                      atScrollPosition:UITableViewScrollPositionNone
+                              animated:false];
+    
+    
 }
 
 -(void) extractHeaders {
@@ -83,13 +118,13 @@
     if([self.headers count]) {
         [[self.headers lastObject] setValue:[NSNumber numberWithUnsignedLong:(count - indexOfLastHeader)] forKey:@"numCells"];
     }
+    NSLog(@"headers are %@", self.headers);
 }
 
 #pragma mark UITableView Delegate & DataSource
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView {
     return [self.headers count] ? [self.headers count] : 1;
 }
-
 
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if([self.headers count] > 0) {
@@ -102,10 +137,20 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     CellConstructor * c =[self.constructors objectAtIndex:[self indexPathToConstructorIndex:indexPath]];
-    NSLog(@"height is %f", c.preffSize);
+    NSLog(@"heightfor row  %d is %f", indexPath.row, c.preffSize);
     return c.preffSize;
 }
 
+-(void) setCell:(int) cellNumber height:(CGFloat) height {
+    CellConstructor * c = [self.constructors objectAtIndex:cellNumber];
+    c.preffSize = height;
+    NSIndexPath * p = [self cellNumberToIndexPath:cellNumber];
+    if(p) {
+        NSLog(@"relaoding %d %d", p.section, p.row);
+        [self.tView reloadRowsAtIndexPaths:@[p] withRowAnimation:UITableViewRowAnimationNone];
+    }
+
+}
 
 -(CGFloat) tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     if([self.headers count] > section) { //todo is that always true
@@ -135,13 +180,35 @@
     return offset + indexPath.row;
 }
 
+-(NSIndexPath *) cellNumberToIndexPath:(size_t) cellNum {
+    int curCell=0;
+    for(int i=0;i < [self.headers count]; i++) {
+        int numCellsThisSection = [[[self.headers objectAtIndex:i] valueForKey:@"numCells"] intValue];
+        if(curCell + numCellsThisSection > cellNum) { // correct section.
+            return [NSIndexPath indexPathForItem:(cellNum - curCell) inSection:i];
+        }
+        else {
+            curCell+=numCellsThisSection;
+        }
+    }
+    NSLog(@"cellNum is out of bounds");
+    return nil;
+}
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     CellConstructor * constructor = [self.constructors objectAtIndex:[self indexPathToConstructorIndex:indexPath]];
+    if(constructor.constructedCell) {
+        NSLog(@"using constructed cell %f", constructor.constructedCell.frame.size.height);
+       // [constructor.constructedCell setFrame:CGRectMake(0, 0, self.tView.frame.size.width, constructor.preffSize)];
+        return constructor.constructedCell;
+    }
+    
     UITableViewCell * cell = constructor.buildCell();
+    constructor.constructedCell = cell;
     constructor.table = tableView;
     constructor.indexPath=  indexPath;
     cell.userInteractionEnabled = YES;
     return (UITableViewCell *)cell;
+    
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {

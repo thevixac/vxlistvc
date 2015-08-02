@@ -33,6 +33,7 @@
     }
     return self;
 }
+
 -(id) initWithBuilder:(UITableViewCell * (^)(void)) builder handler:(void (^)(void)) handler
 {
     return [self initWithBuilder:builder handler:handler height:50];

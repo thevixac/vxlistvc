@@ -207,7 +207,7 @@
 {
     [super viewDidLoad];
      [[self.navigationController navigationBar] setTranslucent:NO];
-    self.tView= [[UITableView alloc] initWithFrame:self.view.frame];
+    self.tView= [[UITableView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height-64)];;
     [self.view addSubview:self.tView];
 
     [self buildXibList];

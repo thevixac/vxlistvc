@@ -29,6 +29,7 @@ typedef UIView * (^HeaderBuilder)(void);
 @property (assign) float preffSize;
 @property (assign) int64_t constructorId;
 @property (nonatomic, copy) NSString * sectionHeader; //if set, this cell becomes the start of a new section
+@property (nonatomic, weak) UITableViewCell * constructedCell;
 
 
 
