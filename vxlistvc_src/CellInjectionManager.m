@@ -159,7 +159,7 @@
             return v.frame.size.height;
         }
     }
-    return 0.0;
+    return 30.0;
 }
 -(UITableViewCell *) newCell:(NSString *) identifier {
     return  [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
