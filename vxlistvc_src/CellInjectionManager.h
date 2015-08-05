@@ -16,10 +16,12 @@
     
 }
 
+
+@property (nonatomic, assign) bool cellsClickable;
 @property (nonatomic, strong) NSMutableArray * constructors;
 @property (copy) void (^scrolledToTopCallback)(void);
 @property (nonatomic, weak) IBOutlet UITableView * tView;
-
+@property (nonatomic, strong) UIView * footerView;
 -(UITableViewCell *) cellForReuseIdentifier:(NSString *) identifier;
 -(UITableViewCell *) newCell:(NSString *) identifier;
 

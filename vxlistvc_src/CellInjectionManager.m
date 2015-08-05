@@ -23,7 +23,8 @@
 }
 
 -(void) setup {
-        self.headers = [NSMutableArray array];
+    self.cellsClickable = true;
+    self.headers = [NSMutableArray array];
 }
 
 -(void) setTView:(UITableView *)tView {
@@ -38,12 +39,16 @@
     if(!self.tView) {
         NSLog(@"warning, cellinjection has no table");
     }
-    [self.tView reloadData];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.tView reloadData];
+    });
+
 }
 
 -(id) initWithTable:(UITableView *) table {
     self = [super init];
     if(self) {
+        [self setup];
         self.tView = table;
     }
     return self;
@@ -58,7 +63,6 @@
 }
 
 -(void) reloadCellsFromIndex:(size_t) index constructors:(NSArray *) newConstructors {
-    NSLog(@"well well well");
     int oldCount =[self.constructors count];
 
     //TODO what if theres nothing before this
@@ -137,7 +141,6 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     CellConstructor * c =[self.constructors objectAtIndex:[self indexPathToConstructorIndex:indexPath]];
-    NSLog(@"heightfor row  %d is %f", indexPath.row, c.preffSize);
     return c.preffSize;
 }
 
@@ -149,7 +152,6 @@
         NSLog(@"relaoding %d %d", p.section, p.row);
         [self.tView reloadRowsAtIndexPaths:@[p] withRowAnimation:UITableViewRowAnimationNone];
     }
-
 }
 
 -(CGFloat) tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
@@ -158,9 +160,18 @@
         if(v) {
             return v.frame.size.height;
         }
+        return 23.0;
     }
-    return 30.0;
+    return 0.0;
 }
+
+-(CGFloat) tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+    if(self.footerView) {
+        return self.footerView.frame.size.height;
+    }
+    return 0;
+}
+
 -(UITableViewCell *) newCell:(NSString *) identifier {
     return  [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
 }
@@ -194,6 +205,7 @@
     NSLog(@"cellNum is out of bounds");
     return nil;
 }
+
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     CellConstructor * constructor = [self.constructors objectAtIndex:[self indexPathToConstructorIndex:indexPath]];
     if(constructor.constructedCell) {
@@ -219,9 +231,12 @@
     }
 }
 
-
 - (void) tableView:(UITableView *)tv didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    [tv deselectRowAtIndexPath:indexPath animated:YES];
+    [tv deselectRowAtIndexPath:indexPath animated:NO];
+    if(!self.cellsClickable) {
+        return;
+    }
+    
     
     CellConstructor * c= [self.constructors objectAtIndex:[self indexPathToConstructorIndex:indexPath]];
     if(c.handleCellSelectedWithCell) {
@@ -244,17 +259,20 @@
     }
     return  nil;
 }
+
 -(NSString *) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     return [self.headers count] ? [[self.headers objectAtIndex:section] valueForKey:@"title"] : nil;
 }
 
-
 - (NSString *) tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
-    return @"";
+    return nil;
 }
 
--(void) scrollToBottom
-{
+-(UIView *) tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
+    return self.footerView;
+}
+
+-(void) scrollToBottom {
     [self scrollToBottom:true];
 }
 
