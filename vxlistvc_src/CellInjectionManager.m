@@ -37,7 +37,7 @@
 -(void) refresh {
     [self extractHeaders];
     if(!self.tView) {
-        NSLog(@"warning, cellinjection has no table");
+        NSLog(@"warning, CellInjectionManager has no table");
     }
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.tView reloadData];
@@ -85,7 +85,6 @@
 }
 
 -(void) jumpToCell:(NSIndexPath *) path {
-    NSLog(@"jumping to cell %d %d", (int)path.section, (int)path.row);
     [self.tView scrollToRowAtIndexPath:path
                       atScrollPosition:UITableViewScrollPositionNone
                               animated:false];
@@ -94,7 +93,6 @@
 }
 
 -(void) extractHeaders {
-    NSLog(@"extracting headers");
     self.headers = [NSMutableArray array];
     size_t indexOfLastHeader=0;
     const size_t count = [self.constructors count];
@@ -122,7 +120,6 @@
     if([self.headers count]) {
         [[self.headers lastObject] setValue:[NSNumber numberWithUnsignedLong:(count - indexOfLastHeader)] forKey:@"numCells"];
     }
-    NSLog(@"headers are %@", self.headers);
 }
 
 #pragma mark UITableView Delegate & DataSource
@@ -149,7 +146,6 @@
     c.preffSize = height;
     NSIndexPath * p = [self cellNumberToIndexPath:cellNumber];
     if(p) {
-        NSLog(@"relaoding %d %d", p.section, p.row);
         [self.tView reloadRowsAtIndexPaths:@[p] withRowAnimation:UITableViewRowAnimationNone];
     }
 }
@@ -202,15 +198,13 @@
             curCell+=numCellsThisSection;
         }
     }
-    NSLog(@"cellNum is out of bounds");
     return nil;
 }
 
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     CellConstructor * constructor = [self.constructors objectAtIndex:[self indexPathToConstructorIndex:indexPath]];
     if(constructor.constructedCell) {
-        NSLog(@"using constructed cell %f", constructor.constructedCell.frame.size.height);
-       // [constructor.constructedCell setFrame:CGRectMake(0, 0, self.tView.frame.size.width, constructor.preffSize)];
+        NSLog(@"reusing cell");
         return constructor.constructedCell;
     }
     

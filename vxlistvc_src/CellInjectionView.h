@@ -19,7 +19,7 @@
 
 @end
 
-@interface CellInjectionView : UIView<UITableViewDelegate, UITableViewDataSource>
+@interface CellInjectionView : UIView
 {
     std::vector<CellConstructor *> constructors_;
     CellInjectionManager * manager_;
@@ -34,8 +34,6 @@
 -(UITableViewCell *) cellForReuseIdentifier:(NSString *) identifier;
 -(UITableViewCell *) newCell:(NSString *) identifier;
 
-
--(CellConstructor *) getConstructor:(size_t) row;
 -(void) addConstructor:(CellConstructor *) constructor;
 -(void) setConstructors:(std::vector<CellConstructor *> const&) constructors;
 
